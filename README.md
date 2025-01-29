@@ -47,7 +47,7 @@ $$
 \epsilon_1 = \epsilon_2 = 0.001.
 $$
 
-With these parameters, the solver successfully finds a root at $c = 9.142456$ after $15$ iterations. Throughout the procedure, the solver also prints the convergence history, detailing the progress of the bisection method at each iteration.
+With these parameters, the solver successfully finds a root at $c \approx 9.142$ after $15$ iterations. Throughout the procedure, the solver also prints the convergence history, detailing the progress of the bisection method at each iteration.
 
 ### Numerical Example 2
 
@@ -61,7 +61,7 @@ $$
 a = -20, \quad b = 0.
 $$
 
-When tolerances $\epsilon_1 = \epsilon_2 = 0.001$ are used, the solver successfully finds a root at $c = -1.414185$ after $15$ iterations.
+When tolerances $\epsilon_1 = \epsilon_2 = 0.001$ are used, the solver successfully finds a root at $c \approx -1.414$ after $15$ iterations.
 
 As the equation is quadratic, we would expect that there is a second root. Using the same tolerances, another possible set of bounds to get the second root is:
 
@@ -69,7 +69,7 @@ $$
 a = 0, \quad b = 20.
 $$
 
-The solver successfully finds the second root at $c = 1.414185$ after $15$ iterations.
+The solver successfully finds the second root at $c \approx 1.414$ after $15$ iterations.
 
 
 
@@ -87,7 +87,7 @@ $$
 a = -10, \quad b = 10.
 $$
 
-When tolerances $\epsilon_1 = \epsilon_2 = 0.001$ are used, the solver successfully finds a root at $c = -1.577759$ after $15$ iterations.
+When tolerances $\epsilon_1 = \epsilon_2 = 0.001$ are used, the solver successfully finds a root at $c \approx -1.578$ after $15$ iterations.
 
 One needs to keep trial-and-error different bounds in order to attain the other two roots.
 
@@ -129,7 +129,7 @@ $$
 L = 8, \quad w = 3, \quad P = 13.
 $$
 
-When using tolerances $\epsilon_1 = \epsilon_2 = 0.001$, the solver successfully finds that the balance force $P$ should be applied at $x = 7.384766$ after $12$ iterations.
+When using tolerances $\epsilon_1 = \epsilon_2 = 0.001$, the solver successfully finds that the balance force $P$ should be applied at $x \approx 7.385$ after $12$ iterations.
 
 In this example, it is important to make sure that the units of the entered valued are consistent.
 
@@ -165,6 +165,6 @@ For instance, when the masses and positions are given as in the following table:
 
 </div>
 
-using the tolerances $\epsilon_1 = \epsilon_2 = 0.001$, the solver successfully finds that the center of mass $x_{COM}$ at $x = 3.321045$ after $14$ iterations.
+using the tolerances $\epsilon_1 = \epsilon_2 = 0.001$, the solver successfully finds that the center of mass $x_{COM}$ at $x \approx 3.321$ after $14$ iterations.
 
 In this example, it is important to make sure that the units of the entered valued are consistent.
