@@ -1,61 +1,131 @@
-# Bisection method solver used for numerical examples 1-3 - ME700 Assignment 1 "warm-up"
+# Bisection method solver - ME700 Assignment 1 "warm-up"
 # Author: Jaafar Alaswad (jalaswad@bu.edu)
 
+
 import numpy as np
+from pathlib import Path
+from typing import Callable, Union
 
-def bisection():
-
+def bisection(fnc: Callable, a: float, b: float, tol_input: float, tol_output: float, max_iterations: int) -> dict:
     """
-    Implements the bisection method to find a root of a user-defined function within a specified interval.
-    The method iteratively halves the interval until a root is found within specified tolerances.
+    This is the main body of the bisection method.
     """
+    validate_b_greater_a(a, b)  # Ensure b is strictly greater than a
+    fnc_a = fnc(a)  # Evaluate the function at a
+    fnc_b = fnc(b)  # Evaluate the function at b
+    validate_interval(a, b, fnc_a, fnc_b)  # Ensure a root is guaranteed in [a, b]
+    iteration = 1  # Initialize iteration counter
 
-    # Prompt user for the equation and define it as a NumPy function
-    f_expr = input("Enter the equation as a function of x, f(x): ")
-    f = eval(f"lambda x: {f_expr}", {"np": np})
-    
-    # Ensure the user enters a valid interval
-    while True:
-
-        # Check if the interval contains a root using the Intermediate Value Theorem
-        a = float(input("Enter the lower limit (a): "))
-        b = float(input("Enter the upper limit (b): "))
-        
-        # Check if f(a) * f(b) < 0
-        if f(a) * f(b) < 0: 
-            break  # Valid interval found
-        else:
-            print("A root in this interval is not guaranteed. Please try another interval.")
-    
-    # Prompt user for tolerances
-    tol_x = float(input("Enter the tolerance with respect to |c-a|: ")) # Tolerance for interval width
-    tol_f = float(input("Enter the tolerance with respect to |f(c)|: ")) # Tolerance for function value
-    
-    # Initialize iteration counter
-    iteration = 0
-
-    # Print table header for displaying iteration results
     print(f"\n{'Iteration':<10} {'a':<15} {'b':<15} {'c':<15} {'|f(c)|':<15}")
-    
-    while True:
-        # Compute the midpoint of the interval
-        c = (a + b) / 2
-        fc = f(c) # Evaluate function at midpoint
-        
-        # Display current iteration results
-        iteration += 1
-        print(f"{iteration:<10} {a:<15.6f} {b:<15.6f} {c:<15.6f} {abs(fc):<15.6e}")
-        
-        # Check stopping criteria: if interval width or function value is below tolerance
-        if abs(c - a) < tol_x or abs(fc) < tol_f:
-            print(f"\nRoot found at c = {c:.6f} after {iteration} iterations.")
-            return
-        
-        # Update interval for next iteration
-        if f(a) * fc < 0: # Opposite signs indicate root in [a, c]
-            b = c
-        else: # Otherwise, root is in [c, b]
-            a = c
 
-# Execute the bisection method
-bisection()
+    while iteration <= max_iterations:
+        c = evaluate_middle_point(a, b)
+        fnc_c = fnc(c)
+
+        print(f"{iteration:<10} {a:<15.6f} {b:<15.6f} {c:<15.6f} {abs(fnc_c):<15.6e}")
+
+        if find_root(a, b, fnc_c, tol_input, tol_output):
+            break
+
+        a, b, fnc_a, fnc_b = update_interval_a_b(a, b, c, fnc_a, fnc_b, fnc_c)
+        iteration += 1
+
+    # Ensure the loop terminates correctly if max_iterations is reached without convergence
+    if iteration >= max_iterations and not find_root(a, b, fnc_c, tol_input, tol_output):
+        terminate_max_iter(iteration, max_iterations)
+
+    result = {
+        'root': c,
+        'iterations': iteration,
+        'function_value': fnc_c,
+        'interval': (a, b),
+        'converged': find_root(a, b, fnc_c, tol_input, tol_output)
+    }
+    
+    print(f"\nRoot found at c = {c:.6f} after {iteration} iterations.")
+
+    return result
+
+def evaluate_middle_point(a: float, b:float) -> float:
+    """
+    This function evaluates the middle point based on given bounds a and b.
+    """
+    c = (a+b)/2
+    return c
+
+
+def validate_b_greater_a(a: float, b: float):
+    """
+    This function makes sure b is strictly greater than a.
+    """
+    if a == b:
+        raise ValueError(f"Invalid input: {a} is equal to {b}.")
+    elif a > b:
+        raise ValueError(f"Invalid input: {a} is greater than {b}.")
+    return True
+
+
+def terminate_max_iter(iteration: int, max_iterations: int):
+    """
+    Given the number of current iterations and maximum number of iterations.
+    Terminate procedure and raise an error if #iteration > maximum number of iterations.
+    """
+    raise ValueError(f"Procedure terminated: specified maximum number of iterations ({max_iterations}) reached without convergence.")
+
+
+
+def validate_interval(a: float, b: float, fnc_a: float, fnc_b: float):
+    """
+    Check the function has different signs at a and b
+    Will return true if fnc_a*fnc_b<0
+    Will return false otherwise.
+    """
+    if fnc_a*fnc_b < 0:
+        return
+    else:
+        raise ValueError("A root in interval [{a},{b}] is not guaranteed.")                  
+    return
+
+
+def update_interval_a_b(a: float, b: float, c: float, fnc_a: float, fnc_b: float, fnc_c: float) -> Union[float, float, float, float]:
+    """
+    Given endpoints a and b and midpoint c and their function evaluations.
+    Will update a and b according to c to to make sure the interval always contains a root.
+    If fnc_a, fnc_b, or fnc_c happens to be exactly zero, a and b will both be assigned to the corresponding point.
+    """
+    if fnc_c == 0: 
+        return c, c, fnc_c, fnc_c
+    if fnc_a == 0:
+        return a, a, fnc_a, fnc_a
+    if fnc_b == 0:
+        return b, b, fnc_b, fnc_b
+    if fnc_a * fnc_c < 0: # Opposite signs indicate root in [a, c]
+        return a, c, fnc_a, fnc_c
+    else: # Otherwise, root is in [b, c]
+        return b, c, fnc_b, fnc_c
+
+
+def find_root(a: float, b: float, fnc_c: float, tol_input: float, tol_output: float) -> bool:
+    """
+    Given end points a and b, function evaluation at c, and perscribed tolerances.
+    Will return "True" if a root is accordingly found.
+    Will return "False" otherwise.
+    """
+    val_input = abs(a-b)
+    val_output = abs(fnc_c)
+    if val_input < tol_input or val_output < tol_output:
+        return True
+    else:
+        return False
+
+
+def update_step(fnc: Callable, a: float, b: float, fnc_a: float, fnc_b: float) -> Union[float, float, float, float]:
+    """
+    Given a continuous function, bounds a and b, and function values at a and b.
+    Will compute the midpoint c and perform the update to a and b according to the bisection method.
+    Will return new values of a, b, fcn_a and fcn_b.
+    """
+    c = evaluate_middle_point(a, b)
+    fnc_c = fnc(c)
+    a, b, fnc_a, fnc_b = update_interval_a_b(a, b, c, fnc_a, fnc_b, fnc_c)
+    return a, b, fnc_a, fnc_b
