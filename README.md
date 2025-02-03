@@ -18,45 +18,73 @@ This procedure is very similar to what we did in the last class. First, you need
 
 ```bash
 conda create --name bisection-method-env python=3.12
+```
 
 After creating the environment (it might have already been created by you earlier), make sure to activate it, use:
 
 ```bash
 conda activate bisection-method-env
+```
 
 Check that you have Python 3.12 in the environment. To do so, use:
 
 ```bash
 python --version
+```
 
 Create an editable install of the bisection method code. Use the following line making sure you are in the correct directory:
 
 ```bash
 pip install -e .
+```
 
 You must do this in the correct directory; in order to make sure, replace the dot at the end by the directory of the folder "ME700-A1-main" that you unzipped earlier: For example, on my computer, the line appears as follows:
 
 ```bash
 pip install -e /Users/jaafaralaswad/Downloads/ME700-A1-main
+```
 
 Now, you can test the code, make sure you are in the tests directory. You can know in which directory you are using:
 
 ```bash
 pwd
+```
 
-Once you are in the tests directory, in my computer, it is /Users/jaafaralaswad/Downloads/ME700-A1-main/tests, use the following to run the tests:
+Navigate to the tests folder using the command:
+
+```bash
+cd
+```
+
+On my computer, to be in the tests folder, I would use:
+
+```bash
+cd /Users/jaafaralaswad/Downloads/ME700-A1-main/tests
+```
+
+
+Once you are in the tests directory, use the following to run the tests:
 
 ```bash
 pytest -s tests.py
+```
 
 Code coverage should be 100%.
 
-To run the tutorial, make sure you are in the tutorials directory. Once you are there, you can use:
+To run the tutorial, make sure you are in the tutorials directory. You can navigate their as you navigated to the tests folder. On my computer, I would use:
+
+```bash
+cd /Users/jaafaralaswad/Downloads/ME700-A1-main/tutorials
+```
+
+Once you are there, you can use:
 
 ```bash
 pip install jupyter
+```
 
 ```bash
 jupyter notebook tutorial.ipynb
+```
 
 A Jupyter notebook will pop up, containing five numerical examples.
